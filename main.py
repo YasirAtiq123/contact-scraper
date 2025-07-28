@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify, url_for, send_from_directory
+from quart import Quart, request, render_template, jsonify, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
@@ -11,7 +11,7 @@ import os
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Quart(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -68,8 +68,8 @@ class DataFile:
         return log_name
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+async def index():
+    return await render_template('index.html')
 
 @app.route('/process', methods=['POST'])
 def process_ajax():
@@ -104,7 +104,7 @@ def process_ajax():
     })
 
 @app.route("/download/<filename>")
-def download_file(filename):
+async def download_file(filename):
     full_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     if os.path.exists(full_path):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
@@ -170,4 +170,4 @@ Format:
     }
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    asyncio.run(app.run_task())
