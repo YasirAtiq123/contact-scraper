@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Info Scraper</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Contact Info Scraper</h1>
+
+    <form id="upload-form" enctype="multipart/form-data">
+      <div class="drop-area" id="drop-area">
+        <label for="file-upload" class="custom-file-upload">Drag & drop Excel file here or click to browse</label>
+        <input type="file" name="file" id="file-upload" accept=".xlsx">
+      </div>
+      <span id="file-name" class="file-name">No file selected</span>
+
+      <div class="sample-preview">
+        <p class="sample-text">Sample Format:</p>
+        <table class="sample-table">
+          <thead>
+            <tr>
+              <th>company name</th>
+              <th>phone number</th>
+              <th>phone number source</th>
+              <th>email address</th>
+              <th>email address source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Apple</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Google</td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="switch-container">
+        <input type="checkbox" id="force-update" name="force_update">
+        <label for="force-update" class="switch-label">Force update existing entries</label>
+      </div>
+
+      <p class="or-separator">— OR —</p>
+
+      <label for="company_names">Paste Company Names (one per line)</label>
+      <textarea name="company_names" id="company_names" placeholder="Apple
+Google
+Netflix..."></textarea>
+      <div id="company-count">0 companies entered</div>
+
+      <button type="submit" id="submit-button">Submit</button>
+    </form>
+
+    <div id="loading" class="loading-wrapper">
+      <div class="spinner"></div>
+      <p class="loading-text">Fetching contact info...</p>§
+    </div>
+
+    <ul id="progress-list"></ul>
+
+    <div id="download-section" style="display: none;">
+      <button onclick="window.open(resultFileUrl)">Download Result File</button>
+      <button onclick="window.open(logFileUrl)">Download Log File</button>
+    </div>
+
+    <div id="toast-container"></div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
