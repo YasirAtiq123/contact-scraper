@@ -72,10 +72,13 @@ async def index():
     return await render_template('index.html')
 
 @app.route('/process', methods=['POST'])
-def process_ajax():
-    file = request.files.get('file')
-    raw_text = request.form.get('company_names', '').strip()
-    force_update = request.form.get("force_update") == "on"
+async def process_ajax():
+    files = await request.files
+    form = await request.form
+
+    file = files.get('file')
+    raw_text = form.get('company_names', '').strip()
+    force_update = form.get("force_update") == "on"
     session_id = str(uuid.uuid4())[:8]
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     if file:
@@ -84,7 +87,7 @@ def process_ajax():
 
         filename = f"{timestamp}_{session_id}_{secure_filename(file.filename)}"
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+        await file.save(filepath)
     elif raw_text:
         companies = [line.strip() for line in raw_text.split('\n') if line.strip()]
         filename = f"{timestamp}_{session_id}_from_text.xlsx"
@@ -94,7 +97,7 @@ def process_ajax():
         return jsonify({"error": "No input provided"}), 400
 
     # Process the file
-    log_filename, statuses = asyncio.run(process_file_ajax(filepath, force_update))
+    log_filename, statuses = await process_file_ajax(filepath, force_update)
 
     return jsonify({
         "message": "Processing complete",
@@ -107,7 +110,7 @@ def process_ajax():
 async def download_file(filename):
     full_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     if os.path.exists(full_path):
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+        return await send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
     return "File not found", 404
 
 async def process_file_ajax(filepath, force_update):
