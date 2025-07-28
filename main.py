@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_file, jsonify, url_for, send_from_directory
+from flask import Flask, request, render_template, jsonify, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
